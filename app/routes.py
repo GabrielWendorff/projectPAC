@@ -3,7 +3,7 @@ import hashlib
 from flask import jsonify,render_template, request
 from . import db
 from flask import current_app as app
-from .models import User
+from .models import User,Volunteer
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -34,3 +34,23 @@ def verify_password_route():
 @app.route('/volunteers')
 def volunteer():
     return render_template('volunteersview.html')
+
+@app.route('/add_volunteer', methods=['POST'])
+def add_volunteer():
+    data = request.get_json()
+    name = data.get('name')
+    email = data.get('email')
+    phone = data.get('phone')
+
+    if not name or not email or not phone:
+        return jsonify({'success': False, 'message': 'Dados incompletos'}), 400
+
+    new_volunteer =Volunteer(name=name, email=email, phone=phone)
+
+    try:
+        db.session.add(new_volunteer)
+        db.session.commit()
+        return jsonify({'success': True}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500

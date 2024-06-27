@@ -121,3 +121,36 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         console.error('Erro:', error);
     });
 });
+
+document.getElementById('volunteerForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    fetch('/add_volunteer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Exibir mensagem de sucesso
+            alert('Voluntário adicionado com sucesso!');
+        } else {
+            // Exibir mensagem de erro
+            alert('Erro ao adicionar voluntário.');
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+    });
+});
