@@ -1,0 +1,90 @@
+#content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+#volunteers {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.container-title {
+    text-align: center;
+    margin-top: 0; /* Alinha o título mais para cima */
+    margin-bottom: 20px;
+}
+
+#volunteers-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: start;
+    max-width: 100%; /* Evita que o conteúdo ultrapasse o container */
+}
+
+.volunteer-card {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.volunteer-info {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #ddd;
+}
+
+.btn-edit {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-add,
+.btn-refresh {
+    background-color: #008CBA;
+    color: white;
+    position: fixed;
+    bottom: 20px; /* Fixados na parte inferior */
+    padding: 15px 30px; /* Aumenta o padding para melhor visibilidade */
+    z-index: 1000; /* Garante que os botões fiquem acima de outros elementos */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.btn-add {
+    margin-left: -80px; /* Espaçamento entre os botões */
+}
+
+.btn-refresh {
+    margin-left: 80px; /* Espaçamento entre os botões */
+    
+}
+
+/* Limita o número de colunas para no máximo 5 */
+@media (min-width: 1200px) {
+    #volunteers-content {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
