@@ -18,9 +18,9 @@
                 <!-- Exemplo de voluntário -->
                 <div class="volunteer-card">
                     <div class="volunteer-info">
-                        <h4>Maria Silva</h4>
-                        <p>47-999999998</p>
-                        <p>teste@gmail.com</p>
+                        <h4 contenteditable="false">Maria Silva</h4>
+                        <p contenteditable="false">47-999999998</p>
+                        <p contenteditable="false">teste@gmail.com</p>
                         <br>
                         <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
                         <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
@@ -28,19 +28,34 @@
                 </div>
                 <div class="volunteer-card">
                     <div class="volunteer-info">
-                        <h4>João Souza</h4>
-                        <p>47-999999999</p>
-                        <p>teste2@gmail.com</p>
+                        <h4 contenteditable="false">João Souza</h4>
+                        <p contenteditable="false">47-999999999</p>
+                        <p contenteditable="false">teste2@gmail.com</p>
                         <br>
                         <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
                         <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
                     </div>
                 </div>
-                <button class="btn-add" onclick="addVolunteer()">Adicionar</button>
+            </div>
+            <div class="btn-container">
+                <button class="btn-add" onclick="openModal()">Adicionar</button>
                 <button class="btn-refresh" onclick="refreshPage()">Atualizar</button>
             </div>
         </section>
     </main>
+
+    <!-- Modal para adicionar voluntário -->
+    <div id="addVolunteerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Adicionar Voluntário</h2>
+            <input type="text" id="volunteerName" class="modal-input" placeholder="Nome do Voluntário">
+            <input type="text" id="volunteerPhone" class="modal-input" placeholder="Telefone do Voluntário">
+            <input type="email" id="volunteerEmail" class="modal-input" placeholder="Email do Voluntário">
+            <button class="modal-button" onclick="saveVolunteer()">Salvar</button>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="{{ url_for('static', filename='src/javascript/script.js') }}"></script>
@@ -71,11 +86,18 @@
             }
         }
 
-        function addVolunteer() {
-            // Lógica para adicionar voluntário
-            const name = prompt("Nome do Voluntário:");
-            const phone = prompt("Telefone do Voluntário:");
-            const email = prompt("Email do Voluntário:");
+        function openModal() {
+            document.getElementById("addVolunteerModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("addVolunteerModal").style.display = "none";
+        }
+
+        function saveVolunteer() {
+            const name = document.getElementById("volunteerName").value;
+            const phone = document.getElementById("volunteerPhone").value;
+            const email = document.getElementById("volunteerEmail").value;
 
             if (name && phone && email) {
                 const volunteersContent = document.getElementById('volunteers-content');
@@ -92,6 +114,12 @@
                     </div>
                 `;
                 volunteersContent.insertBefore(newVolunteerCard, volunteersContent.querySelector('.btn-add'));
+
+                // Limpa os campos e fecha o modal
+                document.getElementById("volunteerName").value = "";
+                document.getElementById("volunteerPhone").value = "";
+                document.getElementById("volunteerEmail").value = "";
+                closeModal();
             } else {
                 alert("Todos os campos são obrigatórios para adicionar um voluntário.");
             }
@@ -99,6 +127,14 @@
 
         function refreshPage() {
             location.reload();
+        }
+
+        // Fechar o modal quando o usuário clicar fora dele
+        window.onclick = function(event) {
+            const modal = document.getElementById("addVolunteerModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
         }
     </script>
 </body>
