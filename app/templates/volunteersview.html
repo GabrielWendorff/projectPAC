@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='src/styles/styles.css') }}">
+    <title>Costura Solidária - Voluntários</title>
+</head>
+<body>
+    <header>
+        <nav id="navbar">
+            <div class="social-media-buttons">
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/costura_solidaria_js/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            </div>
+            <ul id="nav_list">
+                <li class="nav-item active"><a href="#home">Home</a></li>
+                <li class="nav-item"><a href="#help">Ajude</a></li>
+                <li class="nav-item"><a href="#voluntary">Seja voluntário</a></li>
+                <li class="nav-item"><a href="#contact-content">Contato</a></li>
+            </ul>
+            <button id="login_btn" onclick="showLoginPopup()"><i class="fa-solid fa-user fa-2xl"></i></button>
+            <div class="login-popup" id="loginPopup">
+                <div class="login-popup-content">
+                    <span class="close" id="closePopup" onclick="closeLoginPopup()">&times;</span>
+                    <h2>Bem vindo</h2>
+                    <form>
+                        <input type="text" id="username" name="username" required placeholder="Usuário"><br>
+                        <div class="password-container">
+                            <input type="password" id="password" name="password" placeholder="Senha">
+                            <i id="togglePassword" class="fa fa-eye-slash" onclick="togglePasswordVisibility();"></i>
+                        </div><br>
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Lembre de mim</label>
+                        </div>
+                        <button class="btn-login" type="submit">Login</button><br>
+                        <div class="forgotPassword">
+                            <a href="#" id="forgotPassword">Esqueceu a senha?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main id="content">
+        <section id="volunteers">
+            <div class="container-title">
+                <h3 class="section-subtitle"><span>Voluntários</span></h3>
+            </div>
+            <div id="volunteers-content">
+                <!-- Exemplo de voluntário -->
+                <div class="volunteer-card">
+                    <div class="volunteer-info">
+                        <h4>Maria Silva</h4>
+                        <p>47-999999998</p>
+                        <p>teste@gmail.com</p>
+                        <br>
+                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
+                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
+                    </div>
+                </div>
+                <div class="volunteer-card">
+                    <div class="volunteer-info">
+                        <h4>João Souza</h4>
+                        <p>47-999999999</p>
+                        <p>teste2@gmail.com</p>
+                        <br>
+                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
+                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
+                    </div>
+                </div>
+                <button class="btn-add" onclick="addVolunteer()">Adicionar Voluntário</button>
+                <button class="btn-refresh" onclick="refreshPage()">Atualizar</button>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div id="footer_items">
+            <span id="copyright">&copy 2024 Costura Solidária - todos os direitos reservados.</span>
+            <div class="social-media-buttons">
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/costura_solidaria_js/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="{{ url_for('static', filename='src/javascript/script.js') }}"></script>
+    <script>
+        function editVolunteer(button) {
+            // Lógica para editar voluntário
+            alert('Editar voluntário');
+        }
+
+        function deleteVolunteer(button) {
+            // Lógica para excluir voluntário
+            const volunteerCard = button.parentElement.parentElement;
+            volunteerCard.remove();
+        }
+
+        function addVolunteer() {
+            // Lógica para adicionar voluntário
+            alert('Adicionar voluntário');
+        }
+
+        function refreshPage() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
