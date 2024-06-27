@@ -46,18 +46,21 @@
     <script src="{{ url_for('static', filename='src/javascript/script.js') }}"></script>
     <script>
         function editVolunteer(button) {
-            // Lógica para editar voluntário
+            // Alterna o modo de edição
             const volunteerCard = button.parentElement;
-            const name = volunteerCard.querySelector('h4').innerText;
-            const phone = volunteerCard.querySelectorAll('p')[0].innerText;
-            const email = volunteerCard.querySelectorAll('p')[1].innerText;
-            const newName = prompt("Editar Nome:", name);
-            const newPhone = prompt("Editar Telefone:", phone);
-            const newEmail = prompt("Editar Email:", email);
+            const isEditing = volunteerCard.getAttribute("data-editing") === "true";
 
-            if (newName) volunteerCard.querySelector('h4').innerText = newName;
-            if (newPhone) volunteerCard.querySelectorAll('p')[0].innerText = newPhone;
-            if (newEmail) volunteerCard.querySelectorAll('p')[1].innerText = newEmail;
+            if (isEditing) {
+                // Salva as alterações
+                volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
+                button.innerText = "Editar";
+                volunteerCard.setAttribute("data-editing", "false");
+            } else {
+                // Habilita a edição
+                volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'true'));
+                button.innerText = "Salvar";
+                volunteerCard.setAttribute("data-editing", "true");
+            }
         }
 
         function deleteVolunteer(button) {
@@ -79,10 +82,10 @@
                 const newVolunteerCard = document.createElement('div');
                 newVolunteerCard.classList.add('volunteer-card');
                 newVolunteerCard.innerHTML = `
-                    <div class="volunteer-info">
-                        <h4>${name}</h4>
-                        <p>${phone}</p>
-                        <p>${email}</p>
+                    <div class="volunteer-info" data-editing="false">
+                        <h4 contenteditable="false">${name}</h4>
+                        <p contenteditable="false">${phone}</p>
+                        <p contenteditable="false">${email}</p>
                         <br>
                         <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
                         <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
