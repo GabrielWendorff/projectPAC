@@ -15,31 +15,11 @@
                 <h3 class="section-subtitle">Voluntários</h3>
             </div>
             <div id="volunteers-content">
-                <!-- Exemplo de voluntário -->
-                <div class="volunteer-card">
-                    <div class="volunteer-info">
-                        <h4 contenteditable="false">Maria Silva</h4>
-                        <p contenteditable="false">47-999999998</p>
-                        <p contenteditable="false">teste@gmail.com</p>
-                        <br>
-                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                    </div>
-                </div>
-                <div class="volunteer-card">
-                    <div class="volunteer-info">
-                        <h4 contenteditable="false">João Souza</h4>
-                        <p contenteditable="false">47-999999999</p>
-                        <p contenteditable="false">teste2@gmail.com</p>
-                        <br>
-                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                    </div>
-                </div>
+                <!-- Cards dos voluntários serão adicionados aqui -->
             </div>
             <div class="btn-container">
                 <button class="btn-add" onclick="openModal()">Adicionar</button>
-                <button class="btn-refresh" onclick="refreshPage()">Atualizar</button>
+                <button class="btn-refresh" onclick="loadVolunteers()">Atualizar</button>
             </div>
         </section>
     </main>
@@ -60,18 +40,69 @@
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="{{ url_for('static', filename='src/javascript/script.js') }}"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVolunteers();
+        });
+
+        function loadVolunteers() {
+            fetch('/get_volunteers')
+                .then(response => response.json())
+                .then(data => {
+                    const volunteersContent = document.getElementById('volunteers-content');
+                    volunteersContent.innerHTML = '';
+
+                    data.forEach(volunteer => {
+                        const volunteerCard = document.createElement('div');
+                        volunteerCard.classList.add('volunteer-card');
+                        volunteerCard.innerHTML = `
+                            <div class="volunteer-info" data-id="${volunteer.id}" data-editing="false">
+                                <h4 contenteditable="false">${volunteer.name}</h4>
+                                <p contenteditable="false">${volunteer.phone}</p>
+                                <p contenteditable="false">${volunteer.email}</p>
+                                <br>
+                                <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
+                                <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
+                            </div>
+                        `;
+                        volunteersContent.appendChild(volunteerCard);
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar voluntários:', error));
+        }
+
         function editVolunteer(button) {
-            // Alterna o modo de edição
             const volunteerCard = button.parentElement;
             const isEditing = volunteerCard.getAttribute("data-editing") === "true";
 
             if (isEditing) {
-                // Salva as alterações
-                volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
-                button.innerText = "Editar";
-                volunteerCard.setAttribute("data-editing", "false");
+                const id = volunteerCard.getAttribute("data-id");
+                const name = volunteerCard.querySelector('h4').innerText;
+                const phone = volunteerCard.querySelector('p:nth-of-type(1)').innerText;
+                const email = volunteerCard.querySelector('p:nth-of-type(2)').innerText;
+
+                fetch(`/edit_volunteer/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        email: email
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Volunteer updated successfully!') {
+                        volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
+                        button.innerText = "Editar";
+                        volunteerCard.setAttribute("data-editing", "false");
+                    } else {
+                        alert("Erro ao atualizar voluntário.");
+                    }
+                })
+                .catch(error => console.error('Erro ao atualizar voluntário:', error));
             } else {
-                // Habilita a edição
                 volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'true'));
                 button.innerText = "Salvar";
                 volunteerCard.setAttribute("data-editing", "true");
@@ -79,10 +110,22 @@
         }
 
         function deleteVolunteer(button) {
-            // Lógica para excluir voluntário
             if (confirm("Tem certeza que deseja excluir este voluntário?")) {
-                const volunteerCard = button.parentElement.parentElement;
-                volunteerCard.remove();
+                const volunteerCard = button.parentElement;
+                const id = volunteerCard.getAttribute("data-id");
+
+                fetch(`/delete_volunteer/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Volunteer deleted successfully!') {
+                        volunteerCard.remove();
+                    } else {
+                        alert("Erro ao excluir voluntário.");
+                    }
+                })
+                .catch(error => console.error('Erro ao excluir voluntário:', error));
             }
         }
 
@@ -100,36 +143,35 @@
             const email = document.getElementById("volunteerEmail").value;
 
             if (name && phone && email) {
-                const volunteersContent = document.getElementById('volunteers-content');
-                const newVolunteerCard = document.createElement('div');
-                newVolunteerCard.classList.add('volunteer-card');
-                newVolunteerCard.innerHTML = `
-                    <div class="volunteer-info" data-editing="false">
-                        <h4 contenteditable="false">${name}</h4>
-                        <p contenteditable="false">${phone}</p>
-                        <p contenteditable="false">${email}</p>
-                        <br>
-                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                    </div>
-                `;
-                volunteersContent.insertBefore(newVolunteerCard, volunteersContent.querySelector('.btn-add'));
-
-                // Limpa os campos e fecha o modal
-                document.getElementById("volunteerName").value = "";
-                document.getElementById("volunteerPhone").value = "";
-                document.getElementById("volunteerEmail").value = "";
-                closeModal();
+                fetch('/add_volunteer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        email: email
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Volunteer added successfully!') {
+                        loadVolunteers();
+                        document.getElementById("volunteerName").value = "";
+                        document.getElementById("volunteerPhone").value = "";
+                        document.getElementById("volunteerEmail").value = "";
+                        closeModal();
+                    } else {
+                        alert("Erro ao adicionar voluntário.");
+                    }
+                })
+                .catch(error => console.error('Erro ao adicionar voluntário:', error));
             } else {
                 alert("Todos os campos são obrigatórios para adicionar um voluntário.");
             }
         }
 
-        function refreshPage() {
-            location.reload();
-        }
-
-        // Fechar o modal quando o usuário clicar fora dele
         window.onclick = function(event) {
             const modal = document.getElementById("addVolunteerModal");
             if (event.target == modal) {
