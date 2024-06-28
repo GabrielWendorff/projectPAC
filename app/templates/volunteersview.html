@@ -15,48 +15,94 @@
                 <h3 class="section-subtitle">Voluntários</h3>
             </div>
             <div id="volunteers-content">
-                <!-- Exemplo de voluntário -->
-                <div class="volunteer-card">
-                    <div class="volunteer-info">
-                        <h4>Maria Silva</h4>
-                        <p>47-999999998</p>
-                        <p>teste@gmail.com</p>
-                        <br>
-                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                    </div>
-                </div>
-                <div class="volunteer-card">
-                    <div class="volunteer-info">
-                        <h4>João Souza</h4>
-                        <p>47-999999999</p>
-                        <p>teste2@gmail.com</p>
-                        <br>
-                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                    </div>
-                </div>
-                <button class="btn-add" onclick="addVolunteer()">Adicionar</button>
-                <button class="btn-refresh" onclick="refreshPage()">Atualizar</button>
+                <!-- Cards dos voluntários serão adicionados aqui -->
+            </div>
+            <div class="btn-container">
+                <button class="btn-add" onclick="openModal()">Adicionar</button>
+                <button class="btn-refresh" onclick="loadVolunteers()">Atualizar</button>
             </div>
         </section>
     </main>
+
+    <!-- Modal para adicionar voluntário -->
+    <div id="addVolunteerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Adicionar Voluntário</h2>
+            <input type="text" id="volunteerName" class="modal-input" placeholder="Nome do Voluntário">
+            <input type="text" id="volunteerPhone" class="modal-input" placeholder="Telefone do Voluntário">
+            <input type="email" id="volunteerEmail" class="modal-input" placeholder="Email do Voluntário">
+            <button class="modal-button" onclick="saveVolunteer()">Salvar</button>
+        </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="{{ url_for('static', filename='src/javascript/script.js') }}"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVolunteers();
+        });
+
+        function loadVolunteers() {
+            fetch('/get_volunteers')
+                .then(response => response.json())
+                .then(data => {
+                    const volunteersContent = document.getElementById('volunteers-content');
+                    volunteersContent.innerHTML = '';
+
+                    data.forEach(volunteer => {
+                        const volunteerCard = document.createElement('div');
+                        volunteerCard.classList.add('volunteer-card');
+                        volunteerCard.innerHTML = `
+                            <div class="volunteer-info" data-id="${volunteer.id}" data-editing="false">
+                                <h4 contenteditable="false">${volunteer.name}</h4>
+                                <p contenteditable="false">${volunteer.phone}</p>
+                                <p contenteditable="false">${volunteer.email}</p>
+                                <br>
+                                <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
+                                <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
+                            </div>
+                        `;
+                        volunteersContent.appendChild(volunteerCard);
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar voluntários:', error));
+        }
+
         function editVolunteer(button) {
-            // Alterna o modo de edição
             const volunteerCard = button.parentElement;
             const isEditing = volunteerCard.getAttribute("data-editing") === "true";
 
             if (isEditing) {
-                // Salva as alterações
-                volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
-                button.innerText = "Editar";
-                volunteerCard.setAttribute("data-editing", "false");
+                const id = volunteerCard.getAttribute("data-id");
+                const name = volunteerCard.querySelector('h4').innerText;
+                const phone = volunteerCard.querySelector('p:nth-of-type(1)').innerText;
+                const email = volunteerCard.querySelector('p:nth-of-type(2)').innerText;
+
+                fetch(`/edit_volunteer/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        email: email
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Volunteer updated successfully!') {
+                        volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
+                        button.innerText = "Editar";
+                        volunteerCard.setAttribute("data-editing", "false");
+                    } else {
+                        alert("Erro ao atualizar voluntário.");
+                    }
+                })
+                .catch(error => console.error('Erro ao atualizar voluntário:', error));
             } else {
-                // Habilita a edição
                 volunteerCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'true'));
                 button.innerText = "Salvar";
                 volunteerCard.setAttribute("data-editing", "true");
@@ -64,41 +110,73 @@
         }
 
         function deleteVolunteer(button) {
-            // Lógica para excluir voluntário
             if (confirm("Tem certeza que deseja excluir este voluntário?")) {
-                const volunteerCard = button.parentElement.parentElement;
-                volunteerCard.remove();
+                const volunteerCard = button.parentElement;
+                const id = volunteerCard.getAttribute("data-id");
+
+                fetch(`/delete_volunteer/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Volunteer deleted successfully!') {
+                        volunteerCard.remove();
+                    } else {
+                        alert("Erro ao excluir voluntário.");
+                    }
+                })
+                .catch(error => console.error('Erro ao excluir voluntário:', error));
             }
         }
 
-        function addVolunteer() {
-            // Lógica para adicionar voluntário
-            const name = prompt("Nome do Voluntário:");
-            const phone = prompt("Telefone do Voluntário:");
-            const email = prompt("Email do Voluntário:");
+        function openModal() {
+            document.getElementById("addVolunteerModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("addVolunteerModal").style.display = "none";
+        }
+
+        function saveVolunteer() {
+            const name = document.getElementById("volunteerName").value;
+            const phone = document.getElementById("volunteerPhone").value;
+            const email = document.getElementById("volunteerEmail").value;
 
             if (name && phone && email) {
-                const volunteersContent = document.getElementById('volunteers-content');
-                const newVolunteerCard = document.createElement('div');
-                newVolunteerCard.classList.add('volunteer-card');
-                newVolunteerCard.innerHTML = `
-                    <div class="volunteer-info" data-editing="false">
-                        <h4 contenteditable="false">${name}</h4>
-                        <p contenteditable="false">${phone}</p>
-                        <p contenteditable="false">${email}</p>
-                        <br>
-                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                    </div>
-                `;
-                volunteersContent.insertBefore(newVolunteerCard, volunteersContent.querySelector('.btn-add'));
+                fetch('/add_volunteer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        email: email
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Volunteer added successfully!') {
+                        loadVolunteers();
+                        document.getElementById("volunteerName").value = "";
+                        document.getElementById("volunteerPhone").value = "";
+                        document.getElementById("volunteerEmail").value = "";
+                        closeModal();
+                    } else {
+                        alert("Erro ao adicionar voluntário.");
+                    }
+                })
+                .catch(error => console.error('Erro ao adicionar voluntário:', error));
             } else {
                 alert("Todos os campos são obrigatórios para adicionar um voluntário.");
             }
         }
 
-        function refreshPage() {
-            location.reload();
+        window.onclick = function(event) {
+            const modal = document.getElementById("addVolunteerModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
         }
     </script>
 </body>

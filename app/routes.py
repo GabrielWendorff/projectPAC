@@ -54,3 +54,36 @@ def add_volunteer():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/get_volunteers', methods=['GET'])
+def get_volunteers():
+    volunteers = Volunteer.query.all()
+    volunteers_list = [{
+        'id': volunteer.id,
+        'name': volunteer.name,
+        'phone': volunteer.phone,
+        'email': volunteer.email
+    } for volunteer in volunteers]
+    return jsonify(volunteers_list)
+
+@app.route('/delete_volunteer/<int:id>', methods=['DELETE'])
+def delete_volunteer(id):
+    volunteer = Volunteer.query.get_or_404(id)
+    db.session.delete(volunteer)
+    db.session.commit()
+    return jsonify({'message': 'Volunteer deleted successfully!'}), 200
+
+@app.route('/edit_volunteer/<int:id>', methods=['PUT'])
+def edit_volunteer(id):
+    data = request.json
+    name = data.get('name')
+    phone = data.get('phone')
+    email = data.get('email')
+
+    volunteer = Volunteer.query.get_or_404(id)
+    volunteer.name = name
+    volunteer.phone = phone
+    volunteer.email = email
+    db.session.commit()
+
+    return jsonify({'message': 'Volunteer updated successfully!'}), 200
