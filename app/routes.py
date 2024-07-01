@@ -1,9 +1,9 @@
 import hashlib
 
-from flask import jsonify,render_template, request
+from flask import jsonify, render_template, request
 from . import db
 from flask import current_app as app
-from .models import User,Volunteer
+from .models import User, Volunteer
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -87,3 +87,38 @@ def edit_volunteer(id):
     db.session.commit()
 
     return jsonify({'message': 'Volunteer updated successfully!'}), 200
+
+def password_hash(password_provided):
+    return hashlib.md5(password_provided.encode()).hexdigest()
+
+@app.route('/add_manager', methods=['POST'])
+def add_manager():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    if not username or not email or not password:
+        return jsonify({'success': False, 'message': 'Dados incompletos'}), 400
+
+    hashed_password = password_hash(password)
+    new_manager = User(username=username, email=email, password=hashed_password)
+
+    try:
+        db.session.add(new_manager)
+        db.session.commit()
+        return jsonify({'success': True}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/get_managers', methods=['GET'])
+def get_managers():
+    Users = User.query.all()
+    managers_list = [{
+        'id': User.id,
+        'username': User.username,
+        'password': User.password,
+        'email': User.email
+    } for User in Users]
+    return jsonify(managers_list)
