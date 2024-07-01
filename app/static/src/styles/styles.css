@@ -49,6 +49,7 @@ section {
     border: 2px dashed #684614;
     cursor: pointer;
     transition: background-color .3s ease;
+
 }
 
 .btn-default:hover {

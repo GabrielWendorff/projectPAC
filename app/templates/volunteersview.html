@@ -163,7 +163,8 @@
                         document.getElementById("volunteerEmail").value = "";
                         closeModal();
                     } else {
-                        alert("Erro ao adicionar voluntário.");
+                        loadVolunteers();
+                        closeModal();
                     }
                 })
                 .catch(error => console.error('Erro ao adicionar voluntário:', error));
