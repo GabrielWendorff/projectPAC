@@ -5,13 +5,19 @@ footer {
 #footer_items {
     display: flex;
     justify-content: space-between;
-    padding: 10px 8% 24px 8%;
+    padding: 14px 8% 14px 8%;
     align-items: center;
 }
 
 #copyright {
-    color: var(--color-neutral-1);;
+    color: var(--color-neutral-1);
     font-weight: 500;
+}
+
+.footer-text {
+    display: flex;
+    flex-direction: column;
+    color: var(--color-neutral-1);
 }
 
 @media screen and (max-width: 600px) {
