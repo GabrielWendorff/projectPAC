@@ -122,14 +122,47 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     });
 });
 
-document.getElementById('volunteerForm').addEventListener('submit', function(event) {
+
+// Selecionar o elemento do pop-up uma vez
+var RegisterPopup = document.getElementById("registerPopup");
+
+function showRegisterPopup() {
+    registerPopup.style.display = "block";
+}
+
+function closeRegisterPopup() {
+    registerPopup.style.display = "none";
+}
+
+// Fechar o popup se o usuário clicar fora dele
+window.addEventListener("click", function(event) {
+    if (event.target === registerPopup) {
+        closeRegisterPopup();
+    }
+});
+
+function togglePasswordVisibility() {
+    var passwordInput = document.getElementById("password");
+    var toggleIcon = document.getElementById("togglePassword");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleIcon.classList.remove("fa-eye-slash");
+        toggleIcon.classList.add("fa-eye");
+    } else {
+        passwordInput.type = "password";
+        toggleIcon.classList.remove("fa-eye");
+        toggleIcon.classList.add("fa-eye-slash");
+    }
+}
+document.getElementById('registerForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
+    const name = document.getElementById('registerUsername').value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
 
-    fetch('/add_volunteer', {
+    fetch('/register_volunteer', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -137,17 +170,17 @@ document.getElementById('volunteerForm').addEventListener('submit', function(eve
         body: JSON.stringify({
             name: name,
             email: email,
-            phone: phone
+            password: password
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             // Exibir mensagem de sucesso
-            alert('Voluntário adicionado com sucesso!');
+            alert('Cadastro realizado com sucesso!');
         } else {
             // Exibir mensagem de erro
-            alert('Erro ao adicionar voluntário.');
+            alert(data.message);
         }
     })
     .catch(error => {

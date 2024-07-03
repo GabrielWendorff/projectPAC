@@ -40,12 +40,12 @@ def add_volunteer():
     data = request.get_json()
     name = data.get('name')
     email = data.get('email')
-    phone = data.get('phone')
+    password = data.get('password')
 
-    if not name or not email or not phone:
+    if not name or not email or not password:
         return jsonify({'success': False, 'message': 'Dados incompletos'}), 400
 
-    new_volunteer =Volunteer(name=name, email=email, phone=phone)
+    new_volunteer =Volunteer(name=name, email=email, password=password)
 
     try:
         db.session.add(new_volunteer)
@@ -88,37 +88,27 @@ def edit_volunteer(id):
 
     return jsonify({'message': 'Volunteer updated successfully!'}), 200
 
-def password_hash(password_provided):
+
+def hashpassword(password_provided):
     return hashlib.md5(password_provided.encode()).hexdigest()
 
-@app.route('/add_manager', methods=['POST'])
-def add_manager():
+@app.route('/register_volunteer', methods=['POST'])
+def register_volunteer():
     data = request.get_json()
-    username = data.get('username')
+    name = data.get('name')
     email = data.get('email')
     password = data.get('password')
 
-    if not username or not email or not password:
-        return jsonify({'success': False, 'message': 'Dados incompletos'}), 400
+    if not name or not email or not password:
+        return jsonify(success=False, message='Campos obrigatórios não preenchidos.')
 
-    hashed_password = password_hash(password)
-    new_manager = User(username=username, email=email, password=hashed_password)
+    hashed_password = hashpassword(password)
+    new_user = Volunteer(name=name, email=email, password=hashed_password)
 
     try:
-        db.session.add(new_manager)
+        db.session.add(new_user)
         db.session.commit()
-        return jsonify({'success': True}), 201
+        return jsonify(success=True, message='Usuário registrado com sucesso!')
     except Exception as e:
         db.session.rollback()
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-@app.route('/get_managers', methods=['GET'])
-def get_managers():
-    Users = User.query.all()
-    managers_list = [{
-        'id': User.id,
-        'username': User.username,
-        'password': User.password,
-        'email': User.email
-    } for User in Users]
-    return jsonify(managers_list)
+        return jsonify(success=False, message=f'Erro ao registrar usuário: {str(e)}')
