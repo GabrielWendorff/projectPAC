@@ -1,7 +1,7 @@
 import hashlib
 
 from flask import jsonify, render_template, request
-from . import db
+from app import db
 from flask import current_app as app
 from .models import User, Volunteer
 
@@ -45,7 +45,7 @@ def add_volunteer():
     if not name or not email or not phone:
         return jsonify({'success': False, 'message': 'Dados incompletos'}), 400
 
-    new_volunteer =Volunteer(name=name, email=email, phone=phone)
+    new_volunteer = Volunteer(name=name, email=email, phone=phone)
 
     try:
         db.session.add(new_volunteer)
@@ -65,6 +65,18 @@ def get_volunteers():
         'email': volunteer.email
     } for volunteer in volunteers]
     return jsonify(volunteers_list)
+
+@app.route('/get_volunteer/<int:id>', methods=['GET'])
+def get_volunteer(id):
+    volunteer = Volunteer.query.get_or_404(id)
+    volunteer_info = {
+        'id': volunteer.id,
+        'name': volunteer.name,
+        'phone': volunteer.phone,
+        'email': volunteer.email
+    }
+    return jsonify(volunteer_info)
+
 
 @app.route('/delete_volunteer/<int:id>', methods=['DELETE'])
 def delete_volunteer(id):
@@ -122,3 +134,34 @@ def get_managers():
         'email': User.email
     } for User in Users]
     return jsonify(managers_list)
+
+
+@app.route('/get_manager/<int:id>', methods=['GET'])
+def get_manager(id):
+    manager = User.query.get_or_404(id)
+    manager_info = {
+        'id': manager.id,
+        'username': manager.username,
+        'password': manager.password,
+        'email': manager.email
+    }
+    return jsonify(manager_info)
+
+@app.route('/delete_manager/<int:id>', methods=['DELETE'])
+def delete_manager(id):
+    manager = User.query.get_or_404(id)
+    db.session.delete(manager)
+    db.session.commit()
+
+@app.route('/edit_manager/<int:id>', methods=['PUT'])
+def edit_manager(id):
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+
+    manager = User.query.get_or_404(id)
+    manager.username = username
+    manager.email = email
+    db.session.commit()
+
+    return jsonify({'message': 'Manager updated successfully!'}), 200

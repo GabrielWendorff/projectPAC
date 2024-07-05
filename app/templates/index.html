@@ -180,28 +180,30 @@
             </div>
         
             <div id="voluntary-content">
-                <div class="info-voluntary">
-                    <div class="infos">
-                        <p>Aqui, cada ponto costurado carrega esperança e oportunidade. Com suas mãos habilidosas, você pode ajudar a confeccionar roupas para aqueles que mais precisam, proporcionando não apenas vestimenta, mas também dignidade e calor humano. Além disso, ao ensinar técnicas de costura, você estará capacitando pessoas a adquirirem novas habilidades, promovendo a autonomia e a geração de renda.</p>
-                        <p>Imagine a alegria de ver um sorriso no rosto de alguém que recebeu uma peça feita com carinho e atenção por você. Imagine a satisfação de saber que seu tempo e esforço estão contribuindo para um futuro melhor para famílias inteiras.</p>
-                        <p>Junte-se a nós e seja parte dessa corrente do bem. Aqui, cada voluntário é uma peça fundamental para tecer um mundo mais justo e solidário. Venha costurar conosco e faça a diferença!</p>
-                        <p>Seja a mudança que você quer ver no mundo. Voluntarie-se hoje!</p>
-                    </div>
+                <div class="form-voluntary">
+                    <form action="#" method="post" id="volunteerForm">
+                        <div class="forms">
+                            <label for="nome">Nome Completo:</label><br>
+                            <input type="text" id="name" name="nome" required><br>
+                               
+                            <label for="telefone">Telefone:</label><br>
+                            <input type="tel" id="phone" name="telefone" required><br>
+                            
+                            <label for="email">E-mail:</label><br>
+                            <input type="email" id="email" name="email" required><br>
+                        </div>
+                        
+                        <div class="form-declaration">
+                            <button type="submit" class="btn-default">
+                                Enviar
+                            </button>
+                        </div>
+                    </form>
                 </div>
         
                 <img src="{{ url_for('static', filename='src/images/imgvoluntarios.png') }}" alt="" class="img-voluntary">
             </div>
-        
-            <div class="voluntary-declaration">
-                <button type="submit" class="btn-default">Cadastre-se</button>
-            </div>
         </section>
-        
-        
-               
-
-        
-
         <section id="contact">
 
             <div class=".container-title-contact">
