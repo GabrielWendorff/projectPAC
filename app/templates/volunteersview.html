@@ -15,19 +15,34 @@
                 <h3 class="section-subtitle">Voluntários</h3>
             </div>
             <div id="volunteers-content">
-                <!-- Cards dos voluntários serão adicionados aqui -->
             </div>
             <div class="btn-container">
-                <button class="btn-add" onclick="openModal()">Adicionar</button>
+                <button class="btn-add" onclick="openChoiceModal()">Adicionar</button>
                 <button class="btn-refresh" onclick="loadVolunteers()">Atualizar</button>
             </div>
         </section>
+        <section id="admins">
+            <div class="container-title">
+                <h3 class="section-subtitle">Administradores</h3>
+            </div>
+            <div id="admins-content">
+            </div>
+            <div class="btn-container">
+                <button class="btn-refresh" onclick="loadAdmins()">Atualizar</button>
+            </div>
+        </section>
     </main>
-
-    <!-- Modal para adicionar voluntário -->
+    <div id="choiceModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeChoiceModal()">&times;</span>
+            <h2>Escolha uma opção</h2>
+            <button class="modal-button" onclick="openAddVolunteerModal()">Cadastrar Voluntário</button>
+            <button class="modal-button" onclick="openAddAdminModal()">Cadastrar Admin</button>
+        </div>
+    </div>
     <div id="addVolunteerModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+            <span class="close" onclick="closeAddVolunteerModal()">&times;</span>
             <h2>Adicionar Voluntário</h2>
             <input type="text" id="volunteerName" class="modal-input" placeholder="Nome do Voluntário">
             <input type="text" id="volunteerPhone" class="modal-input" placeholder="Telefone do Voluntário">
@@ -35,41 +50,75 @@
             <button class="modal-button" onclick="saveVolunteer()">Salvar</button>
         </div>
     </div>
+    <div id="addAdminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddAdminModal()">&times;</span>
+            <h2>Adicionar Admin</h2>
+            <input type="text" id="adminName" class="modal-input" placeholder="Nome do Admin">
+            <input type="email" id="adminEmail" class="modal-input" placeholder="Email do Admin">
+            <button class="modal-button" onclick="saveAdmin()">Salvar</button>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="{{ url_for('static', filename='src/javascript/script.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            loadVolunteers();
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    loadVolunteers();
+    loadAdmins();
+});
 
-        function loadVolunteers() {
-            fetch('/get_volunteers')
-                .then(response => response.json())
-                .then(data => {
-                    const volunteersContent = document.getElementById('volunteers-content');
-                    volunteersContent.innerHTML = '';
+function loadVolunteers() {
+    fetch('/get_volunteers')
+        .then(response => response.json())
+        .then(data => {
+            const volunteersContent = document.getElementById('volunteers-content');
+            volunteersContent.innerHTML = '';
 
-                    data.forEach(volunteer => {
-                        const volunteerCard = document.createElement('div');
-                        volunteerCard.classList.add('volunteer-card');
-                        volunteerCard.innerHTML = `
-                            <div class="volunteer-info" data-id="${volunteer.id}" data-editing="false">
-                                <h4 contenteditable="false">${volunteer.name}</h4>
-                                <p contenteditable="false">${volunteer.phone}</p>
-                                <p contenteditable="false">${volunteer.email}</p>
-                                <br>
-                                <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                                <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                            </div>
-                        `;
-                        volunteersContent.appendChild(volunteerCard);
-                    });
-                })
-                .catch(error => console.error('Erro ao carregar voluntários:', error));
-        }
+            data.forEach(volunteer => {
+                const volunteerCard = document.createElement('div');
+                volunteerCard.classList.add('volunteer-card');
+                volunteerCard.innerHTML = `
+                    <div class="volunteer-info" data-id="${volunteer.id}" data-editing="false">
+                        <h4 contenteditable="false">${volunteer.name}</h4>
+                        <p contenteditable="false">${volunteer.phone}</p>
+                        <p contenteditable="false">${volunteer.email}</p>
+                        <br>
+                        <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
+                        <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
+                    </div>
+                `;
+                volunteersContent.appendChild(volunteerCard);
+            });
+        })
+        .catch(error => console.error('Erro ao carregar voluntários:', error));
+}
 
+function loadAdmins() {
+    fetch('/get_managers')
+        .then(response => response.json())
+        .then(data => {
+            const adminsContent = document.getElementById('admins-content');
+            adminsContent.innerHTML = '';
+
+            data.forEach(admin => {
+                const adminCard = document.createElement('div');
+                adminCard.classList.add('admin-card');
+                adminCard.innerHTML = `
+                    <div class="admin-info" data-id="${admin.id}" data-editing="false">
+                        <h4 contenteditable="false">${admin.username}</h4>
+                        <p contenteditable="false">${admin.email}</p>
+                        <br>
+                        <button class="btn-edit" onclick="editAdmin(this)">Editar</button>
+                        <button class="btn-delete" onclick="deleteAdmin(this)">Excluir</button>
+                    </div>
+                `;
+                adminsContent.appendChild(adminCard);
+            });
+        })
+        .catch(error => console.error('Erro ao carregar admins:', error));
+}
         function editVolunteer(button) {
             const volunteerCard = button.parentElement;
             const isEditing = volunteerCard.getAttribute("data-editing") === "true";
@@ -129,12 +178,30 @@
             }
         }
 
-        function openModal() {
-            document.getElementById("addVolunteerModal").style.display = "block";
+        function openChoiceModal() {
+            document.getElementById("choiceModal").style.display = "block";
         }
 
-        function closeModal() {
+        function closeChoiceModal() {
+            document.getElementById("choiceModal").style.display = "none";
+        }
+
+        function openAddVolunteerModal() {
+            document.getElementById("addVolunteerModal").style.display = "block";
+            closeChoiceModal();
+        }
+
+        function closeAddVolunteerModal() {
             document.getElementById("addVolunteerModal").style.display = "none";
+        }
+
+        function openAddAdminModal() {
+            document.getElementById("addAdminModal").style.display = "block";
+            closeChoiceModal();
+        }
+
+        function closeAddAdminModal() {
+            document.getElementById("addAdminModal").style.display = "none";
         }
 
         function saveVolunteer() {
@@ -161,10 +228,10 @@
                         document.getElementById("volunteerName").value = "";
                         document.getElementById("volunteerPhone").value = "";
                         document.getElementById("volunteerEmail").value = "";
-                        closeModal();
+                        closeAddVolunteerModal();
                     } else {
                         loadVolunteers();
-                        closeModal();
+                        closeAddVolunteerModal();
                     }
                 })
                 .catch(error => console.error('Erro ao adicionar voluntário:', error));
@@ -173,10 +240,108 @@
             }
         }
 
+        function saveAdmin() {
+            const username = document.getElementById("adminName").value;
+            const email = document.getElementById("adminEmail").value;
+            const password = document.getElementById("adminPassword").value;
+
+            if (username && email && password) {
+                fetch('/add_manager', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Admin added successfully!') {
+                        loadVolunteers();
+                        document.getElementById("adminName").value = "";
+                        document.getElementById("adminEmail").value = "";
+                        document.getElementById("adminPassword").value = "";
+                        closeAddAdminModal();
+                    } else {
+                        loadVolunteers();
+                        closeAddAdminModal();
+                    }
+                })
+                .catch(error => console.error('Erro ao adicionar admin:', error));
+            } else {
+                alert("Todos os campos são obrigatórios para adicionar um admin.");
+            }
+        }
+        function editAdmin(button) {
+    const adminCard = button.parentElement;
+    const isEditing = adminCard.getAttribute("data-editing") === "true";
+
+    if (isEditing) {
+        const id = adminCard.getAttribute("data-id");
+        const name = adminCard.querySelector('h4').innerText;
+        const email = adminCard.querySelector('p').innerText;
+
+        fetch(`/edit_manager/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: username,
+                email: email
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Admin updated successfully!') {
+                adminCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
+                button.innerText = "Editar";
+                adminCard.setAttribute("data-editing", "false");
+            } else {
+                alert("Erro ao atualizar admin.");
+            }
+        })
+        .catch(error => console.error('Erro ao atualizar admin:', error));
+    } else {
+        adminCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'true'));
+        button.innerText = "Salvar";
+        adminCard.setAttribute("data-editing", "true");
+    }
+}
+
+function deleteAdmin(button) {
+    if (confirm("Tem certeza que deseja excluir este admin?")) {
+        const adminCard = button.parentElement;
+        const id = adminCard.getAttribute("data-id");
+
+        fetch(`/delete_manager/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Admin deleted successfully!') {
+                adminCard.remove();
+            } else {
+                alert("Erro ao excluir admin.");
+            }
+        })
+        .catch(error => console.error('Erro ao excluir admin:', error));
+    }
+}
+
         window.onclick = function(event) {
-            const modal = document.getElementById("addVolunteerModal");
-            if (event.target == modal) {
-                modal.style.display = "none";
+            const choiceModal = document.getElementById("choiceModal");
+            const addVolunteerModal = document.getElementById("addVolunteerModal");
+            const addAdminModal = document.getElementById("addAdminModal");
+            if (event.target == choiceModal) {
+                choiceModal.style.display = "none";
+            } else if (event.target == addVolunteerModal) {
+                addVolunteerModal.style.display = "none";
+            } else if (event.target == addAdminModal) {
+                addAdminModal.style.display = "none";
             }
         }
     </script>

@@ -11,21 +11,27 @@
     gap: 20px;
 }
 
+#admins {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
 .container-title {
     text-align: center;
-    margin-top: -80px; /* Alinha o título mais para cima */
+    margin-top: -80px; 
     margin-bottom: 100px;
 }
 
-#volunteers-content {
+#volunteers-content, #admins-content {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     align-items: start;
-    max-width: 100%; /* Evita que o conteúdo ultrapasse o container */
+    max-width: 100%; 
 }
 
-.volunteer-card {
+.volunteer-card, .admin-card {
     background-color: var(--color-primary-2);
     border: 2px dashed var(--color-neutral-1);
     border-radius: 5px;
@@ -33,12 +39,11 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.volunteer-info {
+.volunteer-info, .admin-info {
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
 }
-
 button {
     padding: 10px;
     border: none;
@@ -155,6 +160,9 @@ button:hover {
 /* Limita o número de colunas para no máximo 5 */
 @media (min-width: 1200px) {
     #volunteers-content {
+        grid-template-columns: repeat(5, 1fr);
+    }
+    #admins-content {
         grid-template-columns: repeat(5, 1fr);
     }
 }
