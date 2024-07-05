@@ -1,7 +1,7 @@
 import hashlib
 
 from flask import jsonify, render_template, request
-from . import db
+from app import db
 from flask import current_app as app
 from .models import User, Volunteer
 
@@ -66,6 +66,18 @@ def get_volunteers():
     } for volunteer in volunteers]
     return jsonify(volunteers_list)
 
+@app.route('/get_volunteer/<int:id>', methods=['GET'])
+def get_volunteer(id):
+    volunteer = Volunteer.query.get_or_404(id)
+    volunteer_info = {
+        'id': volunteer.id,
+        'name': volunteer.name,
+        'phone': volunteer.phone,
+        'email': volunteer.email
+    }
+    return jsonify(volunteer_info)
+
+
 @app.route('/delete_volunteer/<int:id>', methods=['DELETE'])
 def delete_volunteer(id):
     volunteer = Volunteer.query.get_or_404(id)
@@ -122,3 +134,39 @@ def get_managers():
         'email': User.email
     } for User in Users]
     return jsonify(managers_list)
+
+
+@app.route('/get_manager/<int:id>', methods=['GET'])
+def get_manager(id):
+    manager = User.query.get_or_404(id)
+    manager_info = {
+        'id': manager.id,
+        'username': manager.username,
+        'password': manager.password,
+        'email': manager.email
+    }
+    return jsonify(manager_info)
+
+@app.route('/delete_manager/<int:id>', methods=['DELETE'])
+def delete_manager(id):
+    manager = User.query.get_or_404(id)
+    db.session.delete(manager)
+    db.session.commit()
+    return jsonify({'message': 'Manager deleted successfully!'}), 200
+
+@app.route('/edit_manager/<int:id>', methods=['PUT'])
+def edit_manager(id):
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email')
+
+    hashedpassord = password_hash(password)
+
+    manager = User.query.get_or_404(id)
+    manager.username = username
+    manager.email = email
+    manager.password = hashedpassord
+    db.session.commit()
+
+    return jsonify({'message': 'Manager updated successfully!'}), 200
