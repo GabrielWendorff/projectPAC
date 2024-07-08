@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='src/styles/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='src/styles/admin.css') }}">
+</head>
+<body>
+    <section id="admins">
+        <div class="container-title">
+            <h3 class="section-subtitle">Administradores</h3>
+        </div>
+        <div id="admins-content">
+        </div>
+        <div class="btn-container">
+            <button class="btn-refresh" onclick="loadAdmins()">Atualizar</button>
+        </div>
+    </section>
+</body>
+</html>
