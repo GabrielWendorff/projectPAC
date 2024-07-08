@@ -165,3 +165,7 @@ def edit_manager(id):
     db.session.commit()
 
     return jsonify({'message': 'Manager updated successfully!'}), 200
+
+@app.route('/manager')
+def manager():
+    return render_template('admin.html')

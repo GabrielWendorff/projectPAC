@@ -9,15 +9,33 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='src/styles/admin.css') }}">
 </head>
 <body>
-    <section id="admins">
-        <div class="container-title">
-            <h3 class="section-subtitle">Administradores</h3>
-        </div>
-        <div id="admins-content">
-        </div>
-        <div class="btn-container">
-            <button class="btn-refresh" onclick="loadAdmins()">Atualizar</button>
-        </div>
-    </section>
+    <main id="content">
+        <header>
+            <nav id="navbar">
+    
+                <div class="admin-buttons">
+                    <a href="" rel="noopener noreferrer" style="text-decoration: none; color: var(--color-neutral-1)"> Adicionar 
+                    </a>
+    
+                    <a href="" rel="noopener noreferrer" style="text-decoration: none; color: var(--color-neutral-1)"> Atualizar
+                    </a>                
+                </div>
+    
+                <ul id="nav_list">
+                    <li class="nav-item active">
+                        <a href="http://127.0.0.1:5000/volunteers">Voluntários</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="http://127.0.0.1:5000/manager">Gestores</a>
+                    </li>
+                </ul>
+
+        </header>
+        <section id="volunteers">
+            <div class="container-title">
+                <h3 class="section-subtitle">Gestores</h3>
+            </div>
+        </section>
+    </main>
 </body>
 </html>
