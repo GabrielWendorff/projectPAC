@@ -66,7 +66,7 @@ def get_volunteers():
     } for volunteer in volunteers]
     return jsonify(volunteers_list)
 
-@app.route('/get_volunteer/<int:id>', methods=['GET'])
+@app.route('/get_volunteers/<int:id>', methods=['GET'])
 def get_volunteer(id):
     volunteer = Volunteer.query.get_or_404(id)
     volunteer_info = {
