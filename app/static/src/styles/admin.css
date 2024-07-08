@@ -44,6 +44,7 @@
     grid-template-columns: 1fr;
     gap: 10px;
 }
+
 button {
     padding: 10px;
     border: none;
@@ -80,11 +81,16 @@ header {
 
 #navbar .admin-buttons {
     display: flex;
-    gap: 35px; /* Adicionei um gap entre os botões de social media */
+    gap: 45px; /* Aumentado o gap entre os botões */
     font-weight: 600;
 }
 
 #navbar .admin-buttons a {
+    font-weight: 600;
+    font-size: 1.4rem; /* Aumenta a fonte */
+    color: var(--color-neutral-1);
+    text-decoration: none;
+    cursor: pointer;
     transition: transform 0.3s ease, color 0.3s ease;
 }
 

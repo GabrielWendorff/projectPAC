@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,8 +13,8 @@
         <header>
             <nav id="navbar">
                 <div class="admin-buttons">
-                    <button class="btn-add" onclick="openAddAdminModal()" style="text-decoration: none; color: var(--color-neutral-1)">Adicionar</button> 
-                    <button class="btn-refresh" onclick="loadAdmins()" style="text-decoration: none; color: var(--color-neutral-1)">Atualizar</button>                
+                    <a class="btn-add" onclick="openAddAdminModal()" style="cursor: pointer;">Adicionar</a> 
+                    <a class="btn-refresh" onclick="loadAdmins()" style="cursor: pointer;">Atualizar</a>                
                 </div>
                 <ul id="nav_list">
                     <li class="nav-item active">
@@ -30,11 +30,10 @@
             <div class="modal-content">
                 <span class="close" onclick="closeAddAdminModal()">&times;</span>
                 <h2>Adicionar Admin</h2>
-            <input type="text" id="adminName" class="modal-input" placeholder="Nome do Administrador">
-            <input type="email" id="adminEmail" class="modal-input" placeholder="Email do Administrador">
-            <input type="text" id="adminPassword" class="modal-input" placeholder="Senha do Administrador">
-                    <button class="modal-button" onclick="saveAdmin()">Salvar</button>
-                </form>
+                <input type="text" id="adminName" class="modal-input" placeholder="Nome do Administrador">
+                <input type="email" id="adminEmail" class="modal-input" placeholder="Email do Administrador">
+                <input type="text" id="adminPassword" class="modal-input" placeholder="Senha do Administrador">
+                <button class="modal-button" onclick="saveAdmin()">Salvar</button>
             </div>
         </div>
 
@@ -63,29 +62,30 @@
         }
 
         function loadAdmins() {
-    fetch('/get_managers')
-        .then(response => response.json())
-        .then(data => {
-            const adminsContent = document.getElementById('admins-content');
-            adminsContent.innerHTML = '';
+            fetch('/get_managers')
+                .then(response => response.json())
+                .then(data => {
+                    const adminsContent = document.getElementById('admins-content');
+                    adminsContent.innerHTML = '';
 
-            data.forEach(admin => {
-                const adminCard = document.createElement('div');
-                adminCard.classList.add('admin-card');
-                adminCard.innerHTML = `
-                    <div class="admin-info" data-id="${admin.id}" data-editing="false">
-                        <h4 contenteditable="false">${admin.username}</h4>
-                        <p contenteditable="false">${admin.email}</p>
-                        <br>
-                        <button class="btn-edit" onclick="editAdmin(this)">Editar</button>
-                        <button class="btn-delete" onclick="deleteAdmin(this)">Excluir</button>
-                    </div>
-                `;
-                adminsContent.appendChild(adminCard);
-            });
-        })
-        .catch(error => console.error('Erro ao carregar admins:', error));
-}
+                    data.forEach(admin => {
+                        const adminCard = document.createElement('div');
+                        adminCard.classList.add('admin-card');
+                        adminCard.innerHTML = `
+                            <div class="admin-info" data-id="${admin.id}" data-editing="false">
+                                <h4 contenteditable="false">${admin.username}</h4>
+                                <p contenteditable="false">${admin.email}</p>
+                                <br>
+                                <button class="btn-edit" onclick="editAdmin(this)">Editar</button>
+                                <button class="btn-delete" onclick="deleteAdmin(this)">Excluir</button>
+                            </div>
+                        `;
+                        adminsContent.appendChild(adminCard);
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar admins:', error));
+        }
+
         function saveAdmin() {
             const username = document.getElementById("adminName").value;
             const email = document.getElementById("adminEmail").value;
