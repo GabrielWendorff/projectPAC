@@ -178,7 +178,8 @@
                         document.getElementById("volunteerEmail").value = "";
                         closeAddVolunteerModal();
                     } else {
-                        alert("Erro ao adicionar voluntário: " + data.message); // Mensagem de erro detalhada
+                        loadVolunteers();
+                        closeAddVolunteerModal();
                     }
                 })
                 .catch(error => {

@@ -152,6 +152,7 @@ def delete_manager(id):
     manager = User.query.get_or_404(id)
     db.session.delete(manager)
     db.session.commit()
+    return jsonify({'message': 'Manager deleted successfully!'}), 200
 
 @app.route('/edit_manager/<int:id>', methods=['PUT'])
 def edit_manager(id):

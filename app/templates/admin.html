@@ -17,10 +17,10 @@
                     <a class="btn-refresh" onclick="loadAdmins()" style="cursor: pointer;">Atualizar</a>                
                 </div>
                 <ul id="nav_list">
-                    <li class="nav-item active">
+                    <li class="nav-item">
                         <a href="http://127.0.0.1:5000/volunteers">Voluntários</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item active">
                         <a href="http://127.0.0.1:5000/manager">Gestores</a>
                     </li>
                 </ul>
@@ -32,7 +32,7 @@
                 <h2>Adicionar gestor</h2>
                 <input type="text" id="adminName" class="modal-input" placeholder="Nome do gestor">
                 <input type="email" id="adminEmail" class="modal-input" placeholder="Email do gestor">
-                <input type="text" id="adminPassword" class="modal-input" placeholder="Senha do gestor">
+                <input type="password" id="adminPassword" class="modal-input" placeholder="Senha do gestor">
                 <button class="modal-button" onclick="saveAdmin()">Salvar</button>
             </div>
         </div>
@@ -83,7 +83,7 @@
                         adminsContent.appendChild(adminCard);
                     });
                 })
-                .catch(error => console.error('Erro ao carregar admins:', error));
+                .catch(error => console.error('Erro ao carregar gestores:', error));
         }
 
         function saveAdmin() {
@@ -105,7 +105,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message === 'Admin added successfully!') {
+                    if (data.message === 'undefined') {
                         loadAdmins();
                         document.getElementById("adminName").value = "";
                         document.getElementById("adminEmail").value = "";
@@ -116,19 +116,19 @@
                         closeAddAdminModal();
                     }
                 })
-                .catch(error => console.error('Erro ao adicionar admin:', error));
+                .catch(error => console.error('Erro ao adicionar gestor:', error));
             } else {
-                alert("Todos os campos são obrigatórios para adicionar um admin.");
+                alert("Todos os campos são obrigatórios para adicionar um gestor.");
             }
         }
 
-        function editAdmin(button) {
+                function editAdmin(button) {
             const adminCard = button.parentElement;
             const isEditing = adminCard.getAttribute("data-editing") === "true";
 
             if (isEditing) {
                 const id = adminCard.getAttribute("data-id");
-                const name = adminCard.querySelector('h4').innerText;
+                const username = adminCard.querySelector('h4').innerText;
                 const email = adminCard.querySelector('p').innerText;
 
                 fetch(`/edit_manager/${id}`, {
@@ -137,21 +137,21 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        username: name,
+                        username: username,
                         email: email
                     })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message === 'Admin updated successfully!') {
+                    if (data.message === 'Manager updated successfully!') {
                         adminCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'false'));
                         button.innerText = "Editar";
                         adminCard.setAttribute("data-editing", "false");
                     } else {
-                        alert("Erro ao atualizar admin.");
+                        alert("Erro ao atualizar gestor: " + data.message);
                     }
                 })
-                .catch(error => console.error('Erro ao atualizar admin:', error));
+                .catch(error => console.error('Erro ao atualizar gestor:', error));
             } else {
                 adminCard.querySelectorAll('[contenteditable]').forEach(el => el.setAttribute('contenteditable', 'true'));
                 button.innerText = "Salvar";
@@ -160,7 +160,7 @@
         }
 
         function deleteAdmin(button) {
-            if (confirm("Tem certeza que deseja excluir este admin?")) {
+            if (confirm("Tem certeza que deseja excluir este gestor?")) {
                 const adminCard = button.parentElement;
                 const id = adminCard.getAttribute("data-id");
 
@@ -169,13 +169,13 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.message === 'Admin deleted successfully!') {
+                    if (data.message === 'Manager deleted successfully!') {
                         adminCard.remove();
                     } else {
-                        alert("Erro ao excluir admin.");
+                        alert("Erro ao excluir gestor: " + data.message);
                     }
                 })
-                .catch(error => console.error('Erro ao excluir admin:', error));
+                .catch(error => console.error('Erro ao excluir gestor:', error));
             }
         }
 
