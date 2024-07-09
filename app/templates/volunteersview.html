@@ -13,8 +13,8 @@
         <header>
             <nav id="navbar"> 
                 <div class="admin-buttons">
-                    <a class="btn-add" onclick="openAddAdminModal()" style="cursor: pointer;">Adicionar</a> 
-                    <a class="btn-refresh" onclick="loadAdmins()" style="cursor: pointer;">Atualizar</a>                 
+                    <a class="btn-add" onclick="openAddVolunteerModal()" style="cursor: pointer;">Adicionar</a> 
+                    <a class="btn-refresh" onclick="loadVolunteers()" style="cursor: pointer;">Atualizar</a>                 
                 </div>
                 <ul id="nav_list">
                     <li class="nav-item active">
@@ -28,19 +28,19 @@
         </header>
         <div id="addVolunteerModal" class="modal">
             <div class="modal-content">
-            <span class="close" onclick="closeAddVolunteerModal()">&times;</span>
-            <h2>Adicionar Voluntário</h2>
-            <input type="text" id="volunteerName" class="modal-input" placeholder="Nome do Voluntário">
-            <input type="text" id="volunteerPhone" class="modal-input" placeholder="Telefone do Voluntário">
-            <input type="email" id="volunteerEmail" class="modal-input" placeholder="Email do Voluntário">
-            <button class="modal-button" onclick="saveVolunteer()">Salvar</button>
-                </form>
+                <span class="close" onclick="closeAddVolunteerModal()">&times;</span>
+                <h2>Adicionar Voluntário</h2>
+                <input type="text" id="volunteerName" class="modal-input" placeholder="Nome do Voluntário">
+                <input type="text" id="volunteerPhone" class="modal-input" placeholder="Telefone do Voluntário">
+                <input type="email" id="volunteerEmail" class="modal-input" placeholder="Email do Voluntário">
+                <button class="modal-button" onclick="saveVolunteer()">Salvar</button>
             </div>
         </div>
         <section id="volunteers">
             <div class="container-title">
                 <h3 class="section-subtitle">Voluntários</h3>
             </div>
+            <div id="volunteers-content"></div>
         </section>
     </main>
 
@@ -52,33 +52,40 @@
             loadVolunteers();
         });
 
-    function loadVolunteers() {
-        fetch('/get_volunteers')
-            .then(response => response.json())
-            .then(data => {
-                const volunteersContent = document.getElementById('volunteers-content');
-                volunteersContent.innerHTML = '';
+        function loadVolunteers() {
+            fetch('/get_volunteers')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar voluntários: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const volunteersContent = document.getElementById('volunteers-content');
+                    volunteersContent.innerHTML = '';
 
-                data.forEach(volunteer => {
-                    const volunteerCard = document.createElement('div');
-                    volunteerCard.classList.add('volunteer-card');
-                    volunteerCard.innerHTML = `
-                        <div class="volunteer-info" data-id="${volunteer.id}" data-editing="false">
-                            <h4 contenteditable="false">${volunteer.name}</h4>
-                            <p contenteditable="false">${volunteer.phone}</p>
-                            <p contenteditable="false">${volunteer.email}</p>
-                            <br>
-                            <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
-                            <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
-                        </div>
-                    `;
-                    volunteersContent.appendChild(volunteerCard);
-                });
-            })
-            .catch(error => console.error('Erro ao carregar voluntários:', error));
-    }
-            function editVolunteer(button) {
-                const volunteerCard = button.parentElement;
+                    data.forEach(volunteer => {
+                        const volunteerCard = document.createElement('div');
+                        volunteerCard.classList.add('volunteer-card');
+                        volunteerCard.innerHTML = `
+                            <div class="volunteer-info" data-id="${volunteer.id}" data-editing="false">
+                                <h4 contenteditable="false">${volunteer.name}</h4>
+                                <p contenteditable="false">${volunteer.phone}</p>
+                                <p contenteditable="false">${volunteer.email}</p>
+                                <br>
+                                <button class="btn-edit" onclick="editVolunteer(this)">Editar</button>
+                                <button class="btn-delete" onclick="deleteVolunteer(this)">Excluir</button>
+                            </div>
+                        `;
+                        volunteersContent.appendChild(volunteerCard);
+                    });
+                    console.log('Voluntários carregados com sucesso.');
+                })
+                .catch(error => console.error('Erro ao carregar voluntários:', error));
+        }
+
+        function editVolunteer(button) {
+            const volunteerCard = button.parentElement;
             const isEditing = volunteerCard.getAttribute("data-editing") === "true";
 
             if (isEditing) {
@@ -136,10 +143,8 @@
             }
         }
 
-
         function openAddVolunteerModal() {
             document.getElementById("addVolunteerModal").style.display = "block";
-            closeChoiceModal();
         }
 
         function closeAddVolunteerModal() {
@@ -165,6 +170,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data); // Adicione esta linha para ver a resposta do servidor
                     if (data.message === 'Volunteer added successfully!') {
                         loadVolunteers();
                         document.getElementById("volunteerName").value = "";
@@ -172,15 +178,18 @@
                         document.getElementById("volunteerEmail").value = "";
                         closeAddVolunteerModal();
                     } else {
-                        loadVolunteers();
-                        closeAddVolunteerModal();
+                        alert("Erro ao adicionar voluntário: " + data.message); // Mensagem de erro detalhada
                     }
                 })
-                .catch(error => console.error('Erro ao adicionar voluntário:', error));
+                .catch(error => {
+                    console.error('Erro ao adicionar voluntário:', error);
+                    alert('Erro ao adicionar voluntário: ' + error.message); // Mensagem de erro detalhada
+                });
             } else {
                 alert("Todos os campos são obrigatórios para adicionar um voluntário.");
             }
         }
+
         window.onclick = function(event) {
             const modal = document.getElementById("addVolunteerModal");
             if (event.target == modal) {
