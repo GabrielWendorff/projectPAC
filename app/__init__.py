@@ -1,19 +1,28 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-#from flask_migrate import Migrate
+from flask_cors import CORS
 
 db = SQLAlchemy()
-#migrate = Migrate()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='../client/dist', static_url_path='/')
     app.config.from_object('app.config.Config')
 
     db.init_app(app)
-    #migrate.init_app(app, db)
+
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     with app.app_context():
-        from . import routes  # Certifique-se de que você tem um módulo 'routes'
+        from .controllers import register_controllers
+        register_controllers(app)
+
         db.create_all()
+
+    @app.route('/')
+    def _serve_react():
+        try:
+            return send_from_directory(app.static_folder, 'index.html')
+        except Exception:
+            return 'React front-end not built. Run client build or start dev server.', 200
 
     return app
