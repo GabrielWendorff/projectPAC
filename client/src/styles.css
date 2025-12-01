@@ -25,9 +25,11 @@ body{
   color:#111827;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  /* prevent accidental horizontal scrolling caused by full-bleed sections */
+  overflow-x: hidden;
 }
 
-.container{max-width:1100px;margin:0 auto;padding:2rem}
+.container{max-width:1280px;margin:0 auto;padding:2rem}
 
 .site-header{backdrop-filter: blur(6px);background:transparent;position:sticky;top:0;z-index:40}
 .header-inner{display:flex;align-items:center;justify-content:center;gap:32px}
@@ -72,8 +74,89 @@ body{
 .btn.secondary:hover{background:rgba(255,107,107,0.06)}
 .btn-add{background:linear-gradient(90deg,var(--accent),var(--accent-600));}
 
+/* Larger Help CTA button only inside the help section */
+#help .btn{padding:16px 28px;font-size:1.05rem;border-radius:14px}
+
 section{padding:2rem 0}
 .section-subtitle{margin:0 0 1rem;color:var(--muted);font-weight:600}
+
+/* About section styles */
+.about{padding:3.25rem 0;background:linear-gradient(180deg, rgba(215,54,94,0.03), transparent);}
+.about-inner{max-width:1280px;margin:0 auto;padding:2rem;background:transparent;border-radius:0;box-shadow:none;display:flex;gap:28px;align-items:stretch}
+.about-main{padding:2rem 1rem}
+.about-title{margin:0 0 1rem;font-size:2rem;color:var(--accent);line-height:1.02;font-weight:800;text-align:left}
+.about-body{color:#0f1724;line-height:1.8;font-size:1.03rem}
+.about-body p{margin:0 0 1rem}
+
+/* Left card + right image layout for About */
+.about-card-left{background:var(--card);padding:24px;border-radius:14px;box-shadow:0 12px 40px rgba(2,6,23,0.06);border:1px solid rgba(2,6,23,0.04);display:flex;flex-direction:column;flex:1}
+.about-image{display:flex;align-items:center;justify-content:center;overflow:visible;border-radius:12px;position:relative;flex:0 0 600px}
+.about-image::before,
+.about-image::after{
+  content:"";
+  position:absolute;
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  /* simpler sewn-button look: base color, four holes and subtle highlight */
+  background-color: var(--accent);
+  background-image:
+    radial-gradient(circle at 35% 35%, rgba(0,0,0,0.34) 0 1.6px, transparent 2px),
+    radial-gradient(circle at 65% 35%, rgba(0,0,0,0.34) 0 1.6px, transparent 2px),
+    radial-gradient(circle at 35% 65%, rgba(0,0,0,0.34) 0 1.6px, transparent 2px),
+    radial-gradient(circle at 65% 65%, rgba(0,0,0,0.34) 0 1.6px, transparent 2px),
+    radial-gradient(circle at 30% 28%, rgba(255,255,255,0.45), rgba(255,255,255,0) 40%);
+  background-repeat:no-repeat;
+  background-size: auto, auto, auto, auto, 70% 70%;
+  border:2px solid rgba(0,0,0,0.06);
+  box-shadow:0 8px 22px rgba(2,6,23,0.12), inset 0 -6px 10px rgba(0,0,0,0.08);
+  transform:translateZ(0);
+  z-index:3;
+}
+.about-image::before{top:6px;left:6px}
+.about-image::after{bottom:6px;right:6px}
+.about-image img{width:100%;height:100%;max-height:none;object-fit:cover;border-radius:12px;box-shadow:0 22px 80px rgba(2,6,23,0.14);display:block;transform:scale(1.02);transition:transform .35s ease;position:relative;z-index:2}
+
+/* Aside card and badge */
+.about-aside{padding:20px;display:flex;flex-direction:column;gap:18px}
+.about-badge{display:flex;flex-direction:column;align-items:center;gap:8px}
+.badge-circle{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--accent),var(--accent-600));color:var(--accent-contrast);font-weight:800;font-size:20px;box-shadow:0 12px 30px rgba(215,54,94,0.12)}
+.badge-text{font-size:0.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.about-card{background:linear-gradient(180deg, #fff, #fbfcfd);padding:14px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.06);border:1px solid rgba(2,6,23,0.04)}
+.about-card-title{font-weight:700;color:var(--accent);margin:0 0 8px}
+
+@media(max-width:900px){
+  .about-inner{flex-direction:column;gap:18px}
+  .about-title{text-align:center}
+  .about-main{padding:0}
+  .about-aside{align-items:center}
+  .about-image img{max-height:320px;height:auto}
+  .about-image::before, .about-image::after{display:none}
+}
+
+/* Section title */
+.about-section-title{
+  max-width:1100px;
+  margin:0 auto 0.75rem;
+  padding:0 2rem;
+  font-size:2rem;
+  line-height:1.05;
+  color:var(--accent);
+  font-weight:900;
+  text-align:center;
+  letter-spacing:0.2px;
+}
+
+/* About stats (counters) */
+.about-stats{max-width:1280px;margin:1.25rem auto 0;padding:0 2rem;display:flex;gap:28px;justify-content:center;align-items:center}
+.about-stats .stat{display:flex;flex-direction:column;align-items:center;gap:8px}
+.stat-circle{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--accent),var(--accent-600));color:var(--accent-contrast);font-weight:900;font-size:1.5rem;box-shadow:0 14px 40px rgba(2,6,23,0.12)}
+.stat-label{color:var(--muted);font-size:0.95rem;font-weight:700;text-transform:none}
+
+@media(max-width:900px){
+  .about-stats{flex-direction:row;gap:18px;justify-content:center}
+  .stat-circle{width:72px;height:72px;font-size:1.15rem}
+}
 
 .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 6px 20px rgba(15,23,42,0.06);transition:transform .18s ease,box-shadow .18s ease}
 .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.12)}
@@ -96,7 +179,112 @@ section{padding:2rem 0}
 .help-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
 .help-grid img{border-radius:10px}
 
+/* Help layout tweaks: ensure left icon column and right title/text stack */
+.help-grid .card{min-height:130px;display:grid;grid-template-columns:84px 1fr;gap:16px;align-items:start}
+.help-cta{display:flex;justify-content:center;margin-top:3rem}
+
+/* Large left icon column */
+.card-left{display:flex;align-items:flex-start}
+.card-icon{width:84px;height:84px;flex:0 0 84px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--accent),var(--accent-600));color:var(--accent-contrast);box-shadow:0 12px 30px rgba(215,54,94,0.10)}
+.card-right h4{margin:0 0 6px;font-size:1.05rem}
+
+/* Improve Help section title styling without affecting other sections */
+#help .section-subtitle{font-size:1.6rem;font-weight:900;color:var(--accent);text-align:center;margin-top:3rem;margin-bottom:1rem;letter-spacing:0.2px;line-height:1.03}
+
+/* Intro paragraph under Help title */
+.help-intro{max-width:900px;margin:0 auto 2rem;text-align:center;color:var(--muted);font-size:1rem}
+
+/* Slight icon color override so svg uses white fill via currentColor */
+.card-icon svg{width:28px;height:28px;display:block;color:var(--accent-contrast)}
+
+/* FontAwesome specific sizing: svg inserted by FontAwesome uses .svg-inline--fa */
+.card-icon .svg-inline--fa{width:28px;height:28px}
+.card-icon .svg-inline--fa path{fill:currentColor}
+
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* Volunteers landing (signup) styles */
+/* increase spacing from Help and give Volunteers a distinct section feel */
+/* Make volunteers section full-bleed (use full viewport width) and background white */
+#volunteers{
+  margin-top:5rem;
+  padding-bottom:4rem;
+  /* full-bleed technique: center and expand to viewport width */
+  position:relative;
+  left:50%;
+  transform:translateX(-50%);
+  width:100vw; /* use viewport width but translated to center to avoid offset issues */
+  overflow:hidden;
+  background: linear-gradient(180deg,#ffffff,#ffffff);
+  padding-top:4.75rem; /* increased top breathing to separate from top dots */
+}
+
+/* thin horizontal dotted separator at the top of the volunteers section */
+#volunteers::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 44px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+  /* single row of dots repeating horizontally */
+  background-image: radial-gradient(circle, var(--accent) 3px, transparent 3px);
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  background-position: 14px center;
+  mix-blend-mode: normal;
+}
+
+/* mirror the top dotted separator at the bottom of the volunteers section */
+#volunteers::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 44px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+  background-image: radial-gradient(circle, var(--accent) 3px, transparent 3px);
+  background-repeat: repeat-x;
+  background-size: 28px 28px;
+  background-position: 14px center;
+  mix-blend-mode: normal;
+}
+.volunteers-section .section-subtitle{font-size:2rem;font-weight:900;color:var(--accent);text-align:center;margin:0 auto 0.75rem;letter-spacing:0.4px}
+.volunteers-section .help-intro{max-width:840px;margin:0 auto 1.5rem;text-align:center;color:var(--muted);font-size:1.05rem}
+
+.volunteers-section .signup-wrapper{display:flex;justify-content:center;padding:0 1rem;position:relative;z-index:1}
+.signup-card{max-width:1040px;width:100%;min-height:320px;padding:36px 28px;border-radius:12px;background:linear-gradient(180deg,var(--card),#fbfdff);box-shadow:0 18px 60px rgba(2,6,23,0.06);border:1px solid rgba(2,6,23,0.04);display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.vol-signup{font-size:1rem}
+.vol-signup .form-row{display:flex;flex-direction:column;gap:18px}
+.vol-signup input{width:100%;padding:18px;border-radius:12px;border:1px solid #e6e9ef;font-size:1rem;min-height:40px}
+.signup-card .btn{padding:14px 28px;font-size:1.05rem;border-radius:12px}
+
+/* Disable text selection for volunteers title and subtitle */
+#volunteers .section-subtitle,
+#volunteers .help-intro {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent signup card from lifting on hover; keep button hover only */
+.signup-card.card:hover{transform:none;box-shadow:0 20px 80px rgba(2,6,23,0.07)}
+
+/* responsive adjustments */
+@media(max-width:900px){
+  .signup-card{max-width:720px;padding:24px}
+}
+@media(max-width:520px){
+  .vol-signup .form-row{flex-direction:column}
+  .signup-card{padding:16px}
+}
 
 .site-footer{border-top:1px solid #eef2f7;color:var(--muted);font-size:0.95rem}
 .footer-inner{display:flex;justify-content:space-between;align-items:center}
@@ -124,8 +312,66 @@ section{padding:2rem 0}
   .nav{display:none}
 }
 
+@media(max-width:520px){
+  .help-grid .card{grid-template-columns:1fr;align-items:center;text-align:center}
+  .card-left{justify-content:center}
+  .card-right h4{margin-top:8px}
+}
+
 /* small utilities */
 .muted{color:var(--muted)}
 .mb-1{margin-bottom:8px}
 .mt-1{margin-top:8px}
+
+/* Prevent selecting or dragging text and the hero image, but allow selection/click inside buttons */
+.hero,
+.hero * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.hero .btn,
+.hero .btn * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+.hero-image img{
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent selecting or dragging any text or images inside the About section */
+.about,
+.about * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.about-image img{
+  -webkit-user-drag: none;
+}
+
+/* Prevent selecting or dragging any text or images inside the Help section */
+#help,
+#help * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#help img{
+  -webkit-user-drag: none;
+}
 
