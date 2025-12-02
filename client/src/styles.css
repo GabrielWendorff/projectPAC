@@ -203,6 +203,39 @@ section{padding:2rem 0}
 
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 
+/* Contact-specific styles: spacing, normal-weight text and social icon cards */
+#contact{padding-top:3.25rem;padding-bottom:3.25rem}
+
+#contact .section-subtitle{font-size:1.6rem;font-weight:900;color:var(--accent);text-align:center;margin-bottom:3rem}
+#contact p{color:var(--muted);line-height:1.6;margin:0 0 0.6rem;font-weight:400}
+
+/* Prevent selecting title and paragraphs in Contact */
+#contact .section-subtitle,
+#contact p {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Social icons as transparent cards with accent border and colored icon */
+#contact .social-row{display:flex;gap:12px;margin-top:12px;align-items:center}
+#contact .social-icon{width:56px;height:56px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--accent);color:var(--accent);box-shadow:0 8px 30px rgba(2,6,23,0.06);transition:transform .18s ease,box-shadow .18s ease,background .18s ease;color:var(--accent)}
+#contact .social-icon .svg-inline--fa{width:20px;height:20px}
+#contact .social-icon:hover{
+  transform:translateY(-2px);
+  /* colored shadow instead of full-fill background */
+  box-shadow:0 12px 30px rgba(215,54,94,0.14);
+  background:transparent;
+  color:var(--accent);
+}
+
+@media(max-width:800px){
+  #contact{padding-top:2rem;padding-bottom:2rem}
+  #contact iframe{height:240px}
+  #contact .social-icon{width:48px;height:48px}
+}
+
 /* Volunteers landing (signup) styles */
 /* increase spacing from Help and give Volunteers a distinct section feel */
 /* Make volunteers section full-bleed (use full viewport width) and background white */
@@ -236,6 +269,9 @@ section{padding:2rem 0}
   background-size: 28px 28px;
   background-position: 14px center;
   mix-blend-mode: normal;
+  /* subtle horizontal motion */
+  animation: moveDotsVol 20s linear infinite;
+  transform: translateZ(0);
 }
 
 /* mirror the top dotted separator at the bottom of the volunteers section */
@@ -254,6 +290,19 @@ section{padding:2rem 0}
   background-size: 28px 28px;
   background-position: 14px center;
   mix-blend-mode: normal;
+  /* opposite, slower motion to add depth */
+  animation: moveDotsVolReverse 28s linear infinite;
+  transform: translateZ(0);
+}
+
+/* Animations for volunteers dot strips */
+@keyframes moveDotsVol{
+  from{background-position:0 center}
+  to{background-position:420px center}
+}
+@keyframes moveDotsVolReverse{
+  from{background-position:0 center}
+  to{background-position:-420px center}
 }
 .volunteers-section .section-subtitle{font-size:2rem;font-weight:900;color:var(--accent);text-align:center;margin:0 auto 0.75rem;letter-spacing:0.4px}
 .volunteers-section .help-intro{max-width:840px;margin:0 auto 1.5rem;text-align:center;color:var(--muted);font-size:1.05rem}
@@ -293,7 +342,30 @@ section{padding:2rem 0}
 .social-icon svg{display:block}
 .social-icon:hover{transform:translateY(-2px);transition:transform .18s ease}
 
+/* Footer: simple colored icons without card */
+.site-footer .footer-social{
+  color:var(--accent);
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  transition: transform .30s cubic-bezier(.2,.9,.3,1), color .18s ease, box-shadow .30s cubic-bezier(.2,.9,.3,1);
+  will-change: transform, box-shadow;
+}
+.site-footer .footer-social .svg-inline--fa{width:20px;height:20px;transition:color .18s ease}
+.site-footer .footer-social:hover{color:var(--accent-600);transform:translateY(-4px);box-shadow:0 10px 26px rgba(215,54,94,0.12)}
+
 .site-footer{background:linear-gradient(180deg, rgba(250,251,253,0.6), transparent)}
+
+/* Prevent selecting footer text (copyright) */
+.site-footer .muted,
+.site-footer .muted * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 
 .hero-image{width:480px;flex:0 0 480px;aspect-ratio:1/1;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#ffffff;padding:24px;border:0;transition:transform .28s cubic-bezier(.2,.9,.3,1)}
 .hero-image:hover{transform:scale(1.02)}
