@@ -10,7 +10,8 @@ def create_app():
 
     db.init_app(app)
 
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Allow CORS for API endpoints. In production, set explicit origins.
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
     with app.app_context():
         from .controllers import register_controllers

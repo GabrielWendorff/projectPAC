@@ -18,18 +18,14 @@ async function handleResponse(res) {
 }
 
 export async function getVolunteers(){
-  try {
-    const res = await fetch(`${API_BASE}/`)
-    return await handleResponse(res)
-  } catch (err) {
-    console.error('getVolunteers error', err)
-    return []
-  }
+  const res = await fetch(`${API_BASE}/`, { credentials: 'include' })
+  return await handleResponse(res)
 }
 
 export async function addVolunteer(data){
   const res = await fetch(`${API_BASE}/`,{
     method:'POST',
+    credentials: 'include',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(data)
   })
@@ -37,15 +33,34 @@ export async function addVolunteer(data){
 }
 
 export async function deleteVolunteer(id){
-  const res = await fetch(`${API_BASE}/${id}`,{method:'DELETE'})
+  const res = await fetch(`${API_BASE}/${id}`,{method:'DELETE', credentials: 'include'})
   return handleResponse(res)
 }
 
 export async function editVolunteer(id, data){
   const res = await fetch(`${API_BASE}/${id}`,{
     method:'PUT',
+    credentials: 'include',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify(data)
+  })
+  return handleResponse(res)
+}
+
+export async function verifyUser(username, password){
+  const res = await fetch(`/api/users/verify`,{
+    method: 'POST',
+    credentials: 'include',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ username, password })
+  })
+  return handleResponse(res)
+}
+
+export async function logoutUser(){
+  const res = await fetch(`/api/users/logout`,{
+    method: 'POST',
+    credentials: 'include'
   })
   return handleResponse(res)
 }

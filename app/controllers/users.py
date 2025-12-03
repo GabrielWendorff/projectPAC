@@ -1,13 +1,12 @@
-import hashlib
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request, current_app, session
+from werkzeug.security import generate_password_hash, check_password_hash
 from .. import db
 from ..models import User
 
 users = Blueprint('users', __name__, url_prefix='/api/users')
 
 
-def password_hash(password_provided):
-    return hashlib.md5(password_provided.encode()).hexdigest()
+
 
 
 @users.route('/', methods=['GET'])
@@ -24,7 +23,7 @@ def create_user():
     password = data.get('password')
     if not username or not email or not password:
         return jsonify({'success': False, 'message': 'Dados incompletos'}), 400
-    u = User(username=username, email=email, password=password_hash(password))
+    u = User(username=username, email=email, password=generate_password_hash(password))
     try:
         db.session.add(u)
         db.session.commit()
@@ -43,9 +42,17 @@ def verify_user():
     if not username or not password:
         return jsonify({'success': False}), 400
     user = User.query.filter_by(username=username).first()
-    if user and user.password == password_hash(password):
+    if user and check_password_hash(user.password, password):
+        # store user id in session to mark as authenticated
+        session['user_id'] = user.id
         return jsonify({'success': True}), 200
     return jsonify({'success': False}), 401
+
+
+@users.route('/logout', methods=['POST'])
+def logout_user():
+    session.pop('user_id', None)
+    return jsonify({'success': True}), 200
 
 
 @users.route('/<int:id>', methods=['GET'])
@@ -63,7 +70,7 @@ def update_user(id):
     if data.get('email'):
         u.email = data.get('email')
     if data.get('password'):
-        u.password = password_hash(data.get('password'))
+        u.password = generate_password_hash(data.get('password'))
     db.session.commit()
     return jsonify({'message': 'Manager updated successfully!'}), 200
 

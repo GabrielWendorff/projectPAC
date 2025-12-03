@@ -21,13 +21,17 @@ html,body,#root{height:100%}
 body{
   margin:0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-  background: linear-gradient(180deg, var(--bg), #ffffff);
+  background: var(--bg);
   color:#111827;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   /* prevent accidental horizontal scrolling caused by full-bleed sections */
   overflow-x: hidden;
 }
+
+/* App shell: make main expand so footer stays at bottom of viewport */
+.app-shell{display:flex;flex-direction:column;min-height:100vh}
+.app-shell main{flex:1}
 
 .container{max-width:1280px;margin:0 auto;padding:2rem}
 
@@ -163,14 +167,41 @@ section{padding:2rem 0}
 
 .vol-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .vol-card{padding:16px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);}
-.vol-card h4{margin:0 0 6px}
-.vol-meta{color:var(--muted);font-size:0.95rem;margin-bottom:10px}
+.vol-card h4{margin:0 0 4px}
+.vol-meta{color:var(--muted);font-size:0.95rem;margin-bottom:10px;display:flex;flex-direction:column;gap:4px}
+.vol-line{padding:0}
 .vol-actions{display:flex;gap:8px}
+
+/* Disable elevate (lift) animation for buttons inside info cards when viewing as admin */
+.vol-card .btn{
+  /* keep color/opacity transitions but remove transform/box-shadow lift */
+  transition: background .18s ease, color .12s ease, opacity .12s ease;
+}
+.vol-card .btn:hover{transform:none !important;box-shadow:none !important}
+.vol-card .btn:active{transform:none !important}
+
+/* Floating bottom menu */
+.floating-menu{position:fixed;left:0;right:0;bottom:80px;display:flex;justify-content:center;pointer-events:auto;z-index:220}
+.floating-menu-inner{display:flex;gap:12px;align-items:center;background:var(--card);padding:16px 30px;border-radius:12px;box-shadow:0 18px 60px rgba(2,6,23,0.14);border:1px solid rgba(2,6,23,0.06);max-width:920px;margin:0 16px}
+.floating-menu .btn{padding:16px 40px;border-radius:12px;transition: background .18s ease, color .12s ease, opacity .12s ease}
+.floating-menu .btn.secondary.active{background:linear-gradient(90deg,var(--accent),var(--accent-600));color:var(--accent-contrast);border:0}
+
+/* Remove elevate effect for floating menu buttons */
+.floating-menu .btn:hover{transform:none !important;box-shadow:none !important}
+.floating-menu .btn:active{transform:none !important}
+
+@media(max-width:480px){
+  .floating-menu-inner{padding:10px;gap:8px;border-radius:12px;margin:0 12px}
+  .floating-menu .btn{padding:10px 12px;font-size:0.95rem}
+}
+
+/* (highlight removed) */
 
 .controls{display:flex;gap:8px;margin-bottom:16px}
 
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{z-index:1000}
 .modal-content{width:100%;max-width:520px;background:var(--card);border-radius:12px;padding:20px;box-shadow:0 20px 60px rgba(2,6,23,0.25)}
 .modal-close{background:transparent;border:0;font-size:20px;cursor:pointer}
 .form-row{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
@@ -304,7 +335,7 @@ section{padding:2rem 0}
   from{background-position:0 center}
   to{background-position:-420px center}
 }
-.volunteers-section .section-subtitle{font-size:2rem;font-weight:900;color:var(--accent);text-align:center;margin:0 auto 0.75rem;letter-spacing:0.4px}
+.volunteers-section .section-subtitle{font-size:2rem;font-weight:900;color:var(--accent);text-align:center;margin:0 auto 2rem;letter-spacing:0.4px}
 .volunteers-section .help-intro{max-width:840px;margin:0 auto 1.5rem;text-align:center;color:var(--muted);font-size:1.05rem}
 
 .volunteers-section .signup-wrapper{display:flex;justify-content:center;padding:0 1rem;position:relative;z-index:1}
@@ -313,6 +344,27 @@ section{padding:2rem 0}
 .vol-signup .form-row{display:flex;flex-direction:column;gap:18px}
 .vol-signup input{width:100%;padding:18px;border-radius:12px;border:1px solid #e6e9ef;font-size:1rem;min-height:40px}
 .signup-card .btn{padding:14px 28px;font-size:1.05rem;border-radius:12px}
+
+/* Admin list divider and role switch */
+.volunteer-list .vol-card{border-left:4px solid transparent}
+
+/* Use the same subtitle style for Administrators as Volunteers */
+.admin-section .section-subtitle{font-size:2rem;font-weight:900;color:var(--accent);text-align:center;margin:0 auto 0.75rem;letter-spacing:0.4px}
+
+/* Admin login page styles */
+.admin-login{display:flex;flex-direction:column;align-items:center;gap:18px;padding:12px}
+.admin-login-card{background:var(--card);padding:48px 80px;border-radius:16px;box-shadow:0 28px 100px rgba(2,6,23,0.10);border:1px solid rgba(2,6,23,0.06);width:100%;max-width:720px;min-height:520px;margin:0 auto;display:flex;flex-direction:column;justify-content:center}
+.admin-login .section-subtitle{font-size:2rem;font-weight:900;color:var(--accent);text-align:center;margin:0 0 8px;letter-spacing:0.4px}
+.admin-login .form-row{width:100%;max-width:360px;display:flex;flex-direction:column;gap:12px}
+.admin-login .form-row input{padding:12px 14px;border-radius:10px;border:1px solid #e6e9ef;font-size:1rem;background:linear-gradient(180deg,#fff,#fbfdff)}
+.admin-login .form-row input:focus{outline:none;box-shadow:0 8px 30px rgba(215,54,94,0.06);border-color:var(--accent)}
+.admin-login .btn{width:100%;max-width:360px;padding:12px 16px;border-radius:10px;font-weight:700;margin-top:40px}
+.admin-login form{width:100%}
+
+/* Center admin login vertically on the page */
+.admin-login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding-top:0;padding-bottom:0;background: linear-gradient(180deg, var(--accent), var(--accent-600));}
+.admin-login-page .container{padding-top:0;padding-bottom:0}
+
 
 /* Disable text selection for volunteers title and subtitle */
 #volunteers .section-subtitle,
@@ -329,6 +381,9 @@ section{padding:2rem 0}
 /* responsive adjustments */
 @media(max-width:900px){
   .signup-card{max-width:720px;padding:24px}
+}
+@media(max-width:520px){
+  .admin-login-card{padding:16px;border-radius:12px;min-height:auto}
 }
 @media(max-width:520px){
   .vol-signup .form-row{flex-direction:column}

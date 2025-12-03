@@ -1,17 +1,30 @@
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request, current_app, session
 from .. import db
 from ..models import Volunteer
 
 volunteers = Blueprint('volunteers', __name__, url_prefix='/api/volunteers')
 
 
+def require_login():
+    def _decorator(func):
+        def wrapper(*args, **kwargs):
+            if not session.get('user_id'):
+                return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+            return func(*args, **kwargs)
+        wrapper.__name__ = func.__name__
+        return wrapper
+    return _decorator
+
+
 @volunteers.route('/', methods=['GET'])
+@require_login()
 def list_volunteers():
     vs = Volunteer.query.all()
     return jsonify([{'id': v.id, 'name': v.name, 'phone': v.phone, 'email': v.email} for v in vs])
 
 
 @volunteers.route('/', methods=['POST'])
+@require_login()
 def create_volunteer():
     data = request.get_json() or {}
     name = data.get('name')
@@ -31,12 +44,14 @@ def create_volunteer():
 
 
 @volunteers.route('/<int:id>', methods=['GET'])
+@require_login()
 def get_volunteer(id):
     v = Volunteer.query.get_or_404(id)
     return jsonify({'id': v.id, 'name': v.name, 'phone': v.phone, 'email': v.email})
 
 
 @volunteers.route('/<int:id>', methods=['PUT'])
+@require_login()
 def update_volunteer(id):
     data = request.get_json() or {}
     v = Volunteer.query.get_or_404(id)
@@ -48,6 +63,7 @@ def update_volunteer(id):
 
 
 @volunteers.route('/<int:id>', methods=['DELETE'])
+@require_login()
 def delete_volunteer(id):
     v = Volunteer.query.get_or_404(id)
     db.session.delete(v)
